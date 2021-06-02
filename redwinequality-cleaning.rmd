@@ -1,0 +1,35 @@
+---
+title: 'Práctica 2: Limpieza y análisis de datos'
+author: 'Elisabeth Anna López Simpson y Jesús Antonio Blay Tamarit'
+date: '`r format(Sys.Date(),"%e de %B %Y")`'
+output:
+  html_document:
+    highlight: default
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 2
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Carga del dataset
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Cargamos los paquetes R que vamos a usar
+library(ggplot2)
+library(dplyr)
+
+# Cargamos el fichero de datos
+wine <- read.csv('winequality-red.csv', header=TRUE)
+
+# Verificamos la estructura del conjunto de datos
+str(wine)
+```
+
+
