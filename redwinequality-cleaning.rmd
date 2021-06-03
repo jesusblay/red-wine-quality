@@ -29,22 +29,68 @@ library(dplyr)
 wine <- read.csv('winequality-red.csv', header=TRUE)
 ```
 ## 1. Descripción del dataset. 
+
 ### ¿Por qué es importante y qué pregunta/problema pretende responder?
 
+El dataset contiene distintas observaciones de vino tinto y para cada observación se recogen 12 atributos. Los 11 primeros atributos son mediciones físicoquímicas (de tipo numérico), mientras que el último atributo (la variable de interés), es una clasificación sensorial de la calidad del vino. 
+
+Nuestro objetivo es estudiar como influyen las 11 variables de entrada en la calidad del vino. 
+
+Variables de entrada:
+
+1 - fixed acidity 
+2 - volatile acidity 
+3 - citric acid 
+4 - residual sugar 
+5 - chlorides 
+6 - free sulfur dioxide 
+7 - total sulfur dioxide 
+8 - density 
+9 - pH 
+10 - sulphates 
+11 - alcohol 
+
+Variable de interés: 
+
+12 - quality (puntuación entre 0 y 10)
+
+
+Comenzamos con un primer vistazo a las distintas variables.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-# Verificamos la estructura del conjunto de datos
-str(wine)
+# Verificamos la dimensión y la estructura del conjunto de datos 
+dim(wine)
 summary(wine)
 ```
+Tenemos 1599 observaciones. Vemos también que todas las variables son de tipo numérico.
 
 ## 2. Integración y selección de los datos de interés a analizar.
 
 ## 3. Limpieza de los datos.
 ### 3.1. ¿Los datos contienen ceros o elementos vacíos? ¿Cómo gestionarías cada uno de estos casos?
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+# Estadísticas de valores vacíos
+print('Estadísticas de valores vacíos')
+colSums(is.na(wine))
+colSums(wine=='')
+
+# Estadísticas de valores cero
+print('Estadísticas de valores cero')
+colSums(wine==0)
+```
+
+
 ### 3.2. Identificación y tratamiento de valores extremos.
 
 ## 4. Análisis de los datos.
 ### 4.1. Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Verificamos la dimensión y la estructura del conjunto de datos 
+ggplot(data=wine, aes(x=quality)) + geom_bar(aes(color=quality))
+```
+
 ### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
 ### 4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
 

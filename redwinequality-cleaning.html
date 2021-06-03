@@ -388,20 +388,31 @@ summary {
 
 <div id="TOC">
 <ul>
-<li><a href="#carga-del-dataset"><span class="toc-section-number">1</span> Carga del dataset</a></li>
+<li><a href="#carga-del-dataset-y-de-los-paquetes-de-r-necesarios"><span class="toc-section-number">0.1</span> Carga del dataset y de los paquetes de R necesarios</a></li>
+<li><a href="#descripción-del-dataset."><span class="toc-section-number">0.2</span> Descripción del dataset.</a></li>
+<li><a href="#integración-y-selección-de-los-datos-de-interés-a-analizar."><span class="toc-section-number">0.3</span> Integración y selección de los datos de interés a analizar.</a></li>
+<li><a href="#limpieza-de-los-datos."><span class="toc-section-number">0.4</span> Limpieza de los datos.</a></li>
+<li><a href="#análisis-de-los-datos."><span class="toc-section-number">0.5</span> Análisis de los datos.</a></li>
+<li><a href="#representación-de-los-resultados-a-partir-de-tablas-y-gráficas."><span class="toc-section-number">0.6</span> Representación de los resultados a partir de tablas y gráficas.</a></li>
+<li><a href="#resolución-del-problema.-a-partir-de-los-resultados-obtenidos-cuáles-son-las-conclusiones-los-resultados-permiten-responder-al-problema"><span class="toc-section-number">0.7</span> Resolución del problema. A partir de los resultados obtenidos, ¿cuáles son las conclusiones? ¿Los resultados permiten responder al problema?</a></li>
+<li><a href="#código-hay-que-adjuntar-el-código-preferiblemente-en-r-con-el-que-se-ha-realizado-la-limpieza-análisis-y-representación-de-los-datos.-si-lo-preferís-también-podéis-trabajar-en-python."><span class="toc-section-number">0.8</span> Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.</a></li>
 </ul>
 </div>
 
-<div id="carga-del-dataset" class="section level1">
-<h1><span class="header-section-number">1</span> Carga del dataset</h1>
-<pre class="r"><code># Cargamos los paquetes R que vamos a usar
+<div id="carga-del-dataset-y-de-los-paquetes-de-r-necesarios" class="section level2">
+<h2><span class="header-section-number">0.1</span> Carga del dataset y de los paquetes de R necesarios</h2>
+<pre class="r"><code># Cargamos los paquetes de R que vamos a usar
 library(ggplot2)
 library(dplyr)
 
 # Cargamos el fichero de datos
-wine &lt;- read.csv(&#39;winequality-red.csv&#39;, header=TRUE)
-
-# Verificamos la estructura del conjunto de datos
+wine &lt;- read.csv(&#39;winequality-red.csv&#39;, header=TRUE)</code></pre>
+</div>
+<div id="descripción-del-dataset." class="section level2">
+<h2><span class="header-section-number">0.2</span> Descripción del dataset.</h2>
+<div id="por-qué-es-importante-y-qué-preguntaproblema-pretende-responder" class="section level3">
+<h3><span class="header-section-number">0.2.1</span> ¿Por qué es importante y qué pregunta/problema pretende responder?</h3>
+<pre class="r"><code># Verificamos la estructura del conjunto de datos
 str(wine)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    1599 obs. of  12 variables:
 ##  $ fixed.acidity       : num  7.4 7.8 7.8 11.2 7.4 7.4 7.9 7.3 7.8 7.5 ...
@@ -416,6 +427,62 @@ str(wine)</code></pre>
 ##  $ sulphates           : num  0.56 0.68 0.65 0.58 0.56 0.56 0.46 0.47 0.57 0.8 ...
 ##  $ alcohol             : num  9.4 9.8 9.8 9.8 9.4 9.4 9.4 10 9.5 10.5 ...
 ##  $ quality             : int  5 5 5 6 5 5 5 7 7 5 ...</code></pre>
+<pre class="r"><code>summary(wine)</code></pre>
+<pre><code>##  fixed.acidity   volatile.acidity  citric.acid    residual.sugar  
+##  Min.   : 4.60   Min.   :0.1200   Min.   :0.000   Min.   : 0.900  
+##  1st Qu.: 7.10   1st Qu.:0.3900   1st Qu.:0.090   1st Qu.: 1.900  
+##  Median : 7.90   Median :0.5200   Median :0.260   Median : 2.200  
+##  Mean   : 8.32   Mean   :0.5278   Mean   :0.271   Mean   : 2.539  
+##  3rd Qu.: 9.20   3rd Qu.:0.6400   3rd Qu.:0.420   3rd Qu.: 2.600  
+##  Max.   :15.90   Max.   :1.5800   Max.   :1.000   Max.   :15.500  
+##    chlorides       free.sulfur.dioxide total.sulfur.dioxide    density      
+##  Min.   :0.01200   Min.   : 1.00       Min.   :  6.00       Min.   :0.9901  
+##  1st Qu.:0.07000   1st Qu.: 7.00       1st Qu.: 22.00       1st Qu.:0.9956  
+##  Median :0.07900   Median :14.00       Median : 38.00       Median :0.9968  
+##  Mean   :0.08747   Mean   :15.87       Mean   : 46.47       Mean   :0.9967  
+##  3rd Qu.:0.09000   3rd Qu.:21.00       3rd Qu.: 62.00       3rd Qu.:0.9978  
+##  Max.   :0.61100   Max.   :72.00       Max.   :289.00       Max.   :1.0037  
+##        pH          sulphates         alcohol         quality     
+##  Min.   :2.740   Min.   :0.3300   Min.   : 8.40   Min.   :3.000  
+##  1st Qu.:3.210   1st Qu.:0.5500   1st Qu.: 9.50   1st Qu.:5.000  
+##  Median :3.310   Median :0.6200   Median :10.20   Median :6.000  
+##  Mean   :3.311   Mean   :0.6581   Mean   :10.42   Mean   :5.636  
+##  3rd Qu.:3.400   3rd Qu.:0.7300   3rd Qu.:11.10   3rd Qu.:6.000  
+##  Max.   :4.010   Max.   :2.0000   Max.   :14.90   Max.   :8.000</code></pre>
+</div>
+</div>
+<div id="integración-y-selección-de-los-datos-de-interés-a-analizar." class="section level2">
+<h2><span class="header-section-number">0.3</span> Integración y selección de los datos de interés a analizar.</h2>
+</div>
+<div id="limpieza-de-los-datos." class="section level2">
+<h2><span class="header-section-number">0.4</span> Limpieza de los datos.</h2>
+<div id="los-datos-contienen-ceros-o-elementos-vacíos-cómo-gestionarías-cada-uno-de-estos-casos" class="section level3">
+<h3><span class="header-section-number">0.4.1</span> ¿Los datos contienen ceros o elementos vacíos? ¿Cómo gestionarías cada uno de estos casos?</h3>
+</div>
+<div id="identificación-y-tratamiento-de-valores-extremos." class="section level3">
+<h3><span class="header-section-number">0.4.2</span> Identificación y tratamiento de valores extremos.</h3>
+</div>
+</div>
+<div id="análisis-de-los-datos." class="section level2">
+<h2><span class="header-section-number">0.5</span> Análisis de los datos.</h2>
+<div id="selección-de-los-grupos-de-datos-que-se-quieren-analizarcomparar-planificación-de-los-análisis-a-aplicar." class="section level3">
+<h3><span class="header-section-number">0.5.1</span> Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).</h3>
+</div>
+<div id="comprobación-de-la-normalidad-y-homogeneidad-de-la-varianza." class="section level3">
+<h3><span class="header-section-number">0.5.2</span> Comprobación de la normalidad y homogeneidad de la varianza.</h3>
+</div>
+<div id="aplicación-de-pruebas-estadísticas-para-comparar-los-grupos-de-datos.-en-función-de-los-datos-y-el-objetivo-del-estudio-aplicar-pruebas-de-contraste-de-hipótesis-correlaciones-regresiones-etc.-aplicar-al-menos-tres-métodos-de-análisis-diferentes." class="section level3">
+<h3><span class="header-section-number">0.5.3</span> Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.</h3>
+</div>
+</div>
+<div id="representación-de-los-resultados-a-partir-de-tablas-y-gráficas." class="section level2">
+<h2><span class="header-section-number">0.6</span> Representación de los resultados a partir de tablas y gráficas.</h2>
+</div>
+<div id="resolución-del-problema.-a-partir-de-los-resultados-obtenidos-cuáles-son-las-conclusiones-los-resultados-permiten-responder-al-problema" class="section level2">
+<h2><span class="header-section-number">0.7</span> Resolución del problema. A partir de los resultados obtenidos, ¿cuáles son las conclusiones? ¿Los resultados permiten responder al problema?</h2>
+</div>
+<div id="código-hay-que-adjuntar-el-código-preferiblemente-en-r-con-el-que-se-ha-realizado-la-limpieza-análisis-y-representación-de-los-datos.-si-lo-preferís-también-podéis-trabajar-en-python." class="section level2">
+<h2><span class="header-section-number">0.8</span> Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.</h2>
 </div>
 
 
