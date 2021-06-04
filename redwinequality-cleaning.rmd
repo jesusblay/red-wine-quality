@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Cargamos los paquetes de R que vamos a usar
 library(ggplot2)
 library(dplyr)
-
+library(gridExtra)
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
 ```
@@ -32,27 +32,27 @@ wine <- read.csv('winequality-red.csv', header=TRUE)
 
 ### ¿Por qué es importante y qué pregunta/problema pretende responder?
 
-El dataset contiene distintas observaciones de vino tinto y para cada observación se recogen 12 atributos. Los 11 primeros atributos son mediciones físicoquímicas (de tipo numérico), mientras que el último atributo (la variable de interés), es una clasificación sensorial de la calidad del vino. 
+El dataset contiene distintas observaciones de vino tinto y para cada observación se recogen 12 atributos. Los 11 primeros atributos son mediciones físicoquímicas (de tipo numérico), mientras que el último atributo (la variable de interés), es una clasificación sensorial de la calidad del vino, en una escala de 0 a 10 (esta variable sólo puede tomar valores enteros). 
 
-Nuestro objetivo es estudiar como influyen las 11 variables de entrada en la calidad del vino. 
+Nuestro objetivo es estudiar como influyen las 11 variables de entrada en la calidad del vino y si alguna de ellas es decisiva en una mayor calidad. 
 
 Variables de entrada:
 
-1 - fixed acidity 
-2 - volatile acidity 
-3 - citric acid 
-4 - residual sugar 
-5 - chlorides 
-6 - free sulfur dioxide 
-7 - total sulfur dioxide 
-8 - density 
-9 - pH 
-10 - sulphates 
-11 - alcohol 
+1 - *fixed acidity* 
+2 - *volatile acidity* 
+3 - *citric acid* 
+4 - *residual sugar* 
+5 - *chlorides* 
+6 - *free sulfur dioxide* 
+7 - *total sulfur dioxide* 
+8 - *density* 
+9 - *pH* 
+10 - *sulphates* 
+11 - *alcohol* 
 
 Variable de interés: 
 
-12 - quality (puntuación entre 0 y 10)
+12 - *quality* 
 
 
 Comenzamos con un primer vistazo a las distintas variables.
@@ -62,33 +62,83 @@ Comenzamos con un primer vistazo a las distintas variables.
 dim(wine)
 summary(wine)
 ```
-Tenemos 1599 observaciones. Vemos también que todas las variables son de tipo numérico.
+Tenemos 1599 observaciones. Vemos también que efectivamente todas las variables son de tipo numérico.
 
 ## 2. Integración y selección de los datos de interés a analizar.
 
+De las 11 variables de entrada, a priori desconocemos como afecta cada una y su peso a la calidad final del vino, por lo que para empezar vamos a estudiar la distribución de cada una de estas variables en función de la calidad del vino (cuyos valores, en nuestra muestra, observamos que van del 3 al 8).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución de fixed.acidity, volatile.acidity, citric.acid y residual.sugar en función de la calidad del vino      
+v1 <- ggplot(data=wine, aes(x=factor(quality), y=fixed.acidity, color=quality)) +   geom_boxplot()
+v2 <- ggplot(data=wine, aes(x=factor(quality), y=volatile.acidity, color=quality)) + geom_boxplot()
+v3 <- ggplot(data=wine, aes(x=factor(quality), y=citric.acid, color=quality)) + geom_boxplot()
+v4 <- ggplot(data=wine, aes(x=factor(quality), y=residual.sugar, color=quality)) + geom_boxplot()
+
+grid.arrange(v1, v2, v3, v4, ncol = 2, nrow = 2)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución de chlorides, free.sulfur.dioxide, total.sulfur.dioxide y density en función de la calidad del vino               
+v5 <- ggplot(data=wine, aes(x=factor(quality), y=chlorides, color=quality)) + geom_boxplot()
+v6 <- ggplot(data=wine, aes(x=factor(quality), y=free.sulfur.dioxide, color=quality)) + geom_boxplot()
+v7 <- ggplot(data=wine, aes(x=factor(quality), y=total.sulfur.dioxide, color=quality)) + geom_boxplot()
+v8 <- ggplot(data=wine, aes(x=factor(quality), y=density, color=quality)) + geom_boxplot()
+
+grid.arrange(v5, v6, v7, v8, ncol = 2, nrow = 2)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución de pH, sulphates, y alcohol en función de la calidad del vino                                      
+v9 <- ggplot(data=wine, aes(x=factor(quality), y=pH, color=quality)) + geom_boxplot()
+v10 <- ggplot(data=wine, aes(x=factor(quality), y=sulphates, color=quality)) + geom_boxplot()
+v11 <- ggplot(data=wine, aes(x=factor(quality), y=alcohol, color=quality)) + geom_boxplot()
+
+grid.arrange(v9, v10, v11, ncol = 2, nrow = 2)
+```
+
+A primera vista es difícil sacar conclusiones, pero estos datos ya nos ofrecen un primer punto de partida a partir del cuál comenzar nuestro análisis:
+
+Según muestran los *boxplots* anteriores, podría existir una relación inversa entre la variable ***quality*** y las variables ***volatile.acidity***, ***chlorides ***,  ***density *** y  ***pH***.
+
+Igualmente, también podría existir una relación positiva entre la variable ***quality*** y las variables ***citric.acid ***,  ***sulphates *** y  ***alcohol***.
+
+Analizaremos estas posibles correlaciones más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino.
+
+
 ## 3. Limpieza de los datos.
 ### 3.1. ¿Los datos contienen ceros o elementos vacíos? ¿Cómo gestionarías cada uno de estos casos?
+
+Antes de comenzar con el análisis, comprobamos la existencia de vacíos o nulos.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 
 # Estadísticas de valores vacíos
-print('Estadísticas de valores vacíos')
 colSums(is.na(wine))
 colSums(wine=='')
 
 # Estadísticas de valores cero
-print('Estadísticas de valores cero')
 colSums(wine==0)
 ```
 
+No existen valores vacíos (en caso de que los hubiera, no deberíamos prescindir de la observación, pero hubiese sido recomendable saberlo en su caso, para ignorar estos valores en las distintas funciones que usaremos en nuestro análisis).
+
+Por otra parte, sí existen valores nulos, concretamente 132 en la variable *citric.acid*, pero entendemos que son valores legítimos y correctos, ya que sus valores posibles, como hemos visto con la función ***summary***, oscilan entre 0 y 1. Por tanto, vamos a dar por buenos estos valores nulos.
 
 ### 3.2. Identificación y tratamiento de valores extremos.
+
+
+
+
+
+
 
 ## 4. Análisis de los datos.
 ### 4.1. Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).
 
+Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, hemos visto que de nuestras 1.599 observaciones, la mejor nota obtenida es 8, situándose la gran mayoría entre 5 y 6 (rango intercuartílico). Observamos con más detalle la distribución de todas las puntuaciones.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Verificamos la dimensión y la estructura del conjunto de datos 
-ggplot(data=wine, aes(x=quality)) + geom_bar(aes(color=quality))
+ggplot(data=wine, aes(x=quality)) + geom_bar()
 ```
 
 ### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
