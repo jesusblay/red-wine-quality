@@ -34,25 +34,25 @@ wine <- read.csv('winequality-red.csv', header=TRUE)
 
 El dataset contiene distintas observaciones de vino tinto y para cada observación se recogen 12 atributos. Los 11 primeros atributos son mediciones físicoquímicas (de tipo numérico), mientras que el último atributo (la variable de interés), es una clasificación sensorial de la calidad del vino, en una escala de 0 a 10 (esta variable sólo puede tomar valores enteros). 
 
-Nuestro objetivo es estudiar como influyen las 11 variables de entrada en la calidad del vino y si alguna de ellas es decisiva en una mayor calidad. 
+Nuestro objetivo es estudiar como influyen las 11 variables de entrada en la calidad del vino y cuáles de ellas son más decisivas en una mayor calidad. 
 
 Variables de entrada:
 
-1 - *fixed acidity* 
-2 - *volatile acidity* 
-3 - *citric acid* 
-4 - *residual sugar* 
-5 - *chlorides* 
-6 - *free sulfur dioxide* 
-7 - *total sulfur dioxide* 
-8 - *density* 
-9 - *pH* 
-10 - *sulphates* 
-11 - *alcohol* 
+1 - *fixed acidity*: mide la acidez fija debida a los ácidos orgánicos presentes en la uva, como los ácidos tartárico, málico y cítrico.
+2 - *volatile acidity*: mide el ácido acético presente en el vino por la fermentación. Puede dar lugar a sensación de olor a vinagre como consecuencia de fermentos dañinos.
+3 - *citric acid*: acidificante para corregir la acidez en mostos y vinos.
+4 - *residual sugar*: mide la cantidad de azúcar presente tras la fermentación.
+5 - *chlorides*: mide la concentración de iones de cloruro, generalmente indicativa de la presencia de cloruro de sodio, que aumenta la salinidad de un vino, lo que puede contribuir o restar valor al sabor y la calidad general del vino.
+6 - *free sulfur dioxide*: mide la cantidad de dioxido de azufre o SO2 que está libre en el vino.
+7 - *total sulfur dioxide*: mide el dióxido de azufre total (TSO2), es decir, la porción de SO2 que está libre en el vino más la porción que está unida a otras sustancias químicas en el vino, como aldehídos, pigmentos o azúcares.
+8 - *density*: mide la densidad del vino, en g/cm3
+9 - *pH*: mide la acidez del vino.
+10 - *sulphates*: aditivo para el vino que actúa como antimicrobiano y antioxidante. Puede contribuir a los niveles de dióxido de azufre.
+11 - *alcohol*: porcentaje de alcohol en el vino.
 
 Variable de interés: 
 
-12 - *quality* 
+12 - *quality*: clasificación sensorial de la calidad del vino, en una escala de 0 a 10.
 
 
 Comenzamos con un primer vistazo a las distintas variables.
@@ -97,11 +97,13 @@ grid.arrange(v9, v10, v11, ncol = 2, nrow = 2)
 
 A primera vista es difícil sacar conclusiones, pero estos datos ya nos ofrecen un primer punto de partida a partir del cuál comenzar nuestro análisis:
 
-Según muestran los *boxplots* anteriores, podría existir una relación inversa entre la variable ***quality*** y las variables ***volatile.acidity***, ***chlorides ***,  ***density *** y  ***pH***.
+Según muestran los *boxplots* anteriores, parece existir una correlación negativa entre la variable ***quality*** y las variables ***volatile.acidity***, ***chlorides *** y  ***pH***, que por otra parte sería completamente coherente con la descripción de estas variables, detallada en el punto 1 (descripción del dataset). También observamos una aparente relación inversa entre ***quality*** y ***density***, que a priori no parece tan obvia y que estudiaremos posteriormente.
 
-Igualmente, también podría existir una relación positiva entre la variable ***quality*** y las variables ***citric.acid ***,  ***sulphates *** y  ***alcohol***.
+Igualmente, también parece existir una relación positiva entre la variable ***quality*** y las variables ***citric.acid ***,  ***sulphates *** y  ***alcohol***.
 
-Analizaremos estas posibles correlaciones más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino.
+Analizaremos estas posibles correlaciones más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino. 
+
+Sin embargo, nos interesaremos especialmente por analizar como afectan a la calidad del vino las variables ***density***, ***citric.acid ***,  ***sulphates *** y  ***alcohol***, así como también el ***pH*** (acidez total del vino) y el ***total sulfur dioxide*** (dióxido de azufre total).
 
 
 ## 3. Limpieza de los datos.
