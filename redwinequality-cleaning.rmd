@@ -26,6 +26,9 @@ library(ggplot2)
 library(dplyr)
 library(gridExtra)
 library(corrplot)
+library(relaimpo)
+library(psych)
+
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
 ```
@@ -63,7 +66,7 @@ Comenzamos con un primer vistazo a las distintas variables.
 dim(wine)
 summary(wine)
 ```
-Tenemos 1599 observaciones. Vemos también que efectivamente todas las variables son de tipo numérico.
+Tenemos 1599 observaciones. Vemos también que efectivamente todas las variables son de tipo numérico. Además, todas las variables son continuas, a excepción de nuestra variable de interés, ***quality***, que es una variable discreta.
 
 ## 2. Integración y selección de los datos de interés a analizar.
 
@@ -83,6 +86,7 @@ v4 <- ggplot(data=wine, aes(x=factor(quality), y=residual.sugar, color=quality))
 
 grid.arrange(v1, v2, v3, v4, ncol = 2, nrow = 2)
 ```
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución de chlorides, free.sulfur.dioxide, total.sulfur.dioxide y density en función de la calidad del vino               
 v5 <- ggplot(data=wine, aes(x=factor(quality), y=chlorides, color=quality)) + geom_boxplot()
@@ -92,6 +96,7 @@ v8 <- ggplot(data=wine, aes(x=factor(quality), y=density, color=quality)) + geom
 
 grid.arrange(v5, v6, v7, v8, ncol = 2, nrow = 2)
 ```
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución de pH, sulphates, y alcohol en función de la calidad del vino                                      
 v9 <- ggplot(data=wine, aes(x=factor(quality), y=pH, color=quality)) + geom_boxplot()
@@ -112,9 +117,8 @@ Igualmente, también parece existir una relación positiva entre la variable ***
 correlation <- cor(wine)
 corrplot(correlation, type ="upper", tl.col="black")
 ```
-
-A pesar de que analizaremos la correlación más adelante, podemos apoyarnos en un gráfico de correlación para corroborar las observaciones hechas anteriormente con el boxplot. 
-Como podemos ver, comprobamos que nuestra variable ***quality*** se relaciona positivamente con ***alcohol***, ***sulphates***, y ***acid.citric*** y de forma negativa con ***volatile.acidity***, y ***chlorides***. Según este gráfico, no queda tan clara la correlación entre ***quality*** y **ph**.
+A pesar de que analizaremos la correlación más adelante, podemos apoyarnos en un gráfico de correlación para corroborar las observaciones hechas anteriormente con los boxplots. 
+Como podemos ver, comprobamos que nuestra variable ***quality*** se relaciona positivamente con ***alcohol***, ***sulphates***, y ***acid.citric*** y de forma negativa con ***volatile.acidity***, y ***chlorides***. Según este gráfico, no queda tan clara la correlación entre ***quality*** y **pH**.
 
 Además, parece claro que la variable ***residual.sugar*** no va a tener efecto en la variable ***quality***, pero no la descartaremos por ahora. 
 
@@ -146,15 +150,66 @@ Por otra parte, sí existen valores nulos, concretamente 132 en la variable *cit
 
 ### 3.2. Identificación y tratamiento de valores extremos.
 
+En lo boxplots del punto 2 observamos que efectivamente la mayoría de variables presentan un buen número de *outliers* si bien es razonable que se produzca la aparicicón de valores extremos en la medida en que estos valores se obtienen como resultado de un reacción química. Entendemos, dada su distribución, que se trata de valores normales derivados de los distintos procesos químicos y composiciones distintas de cada vino, por lo que en principio es razonable considerar que todos estos son valores legítimos y deberíamos considerarlos en nuestro análisis.
 
-TBD
-
-
-
+Respecto de la variable ***quality***, que en principio debe estar limitada a la escala de 0 a 10, observamos que efectivamente nuestros valores se encuentran dentro de dicha escala e incluso se concentran dentro de un rango más pequeño, entre 3-8, por lo que los no existen valores anómalos.
 
 ## 4. Análisis de los datos.
 ### 4.1. Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).
+
+Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, hemos visto que de nuestras 1.599 observaciones, la mejor nota obtenida es 8, situándose la gran mayoría entre 5 y 6 (rango intercuartílico). Observamos con más detalle la distribución de todas las puntuaciones.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Verificamos la dimensión y la estructura del conjunto de datos 
+ggplot(data=wine, aes(x=quality)) + geom_bar(fill='blue', alpha=0.75) + scale_x_discrete(limits=c(0:10))
+```
+
+Vamos a explorar como varían de manera conjunta algunas de las parejas de variables en las que ya hemos inferido una probable relación, distinguiendo la calidad del vino.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución bivariante de las variables alcohol y citric.acid 
+ggplot(data=wine, aes(x=alcohol, y=citric.acid, color=quality)) + geom_point()
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución bivariante de las variables volatile.acidity y sulphates
+ggplot(data=wine, aes(x=volatile.acidity, y=sulphates, color=quality)) + geom_point()
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución bivariante de las variables alcohol y total.sulfur.dioxide
+ggplot(data=wine, aes(x=alcohol, y=total.sulfur.dioxide, color=quality)) + geom_point()
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Distribución bivariante de las variables citric.acid y total.sulfur.dioxide 
+ggplot(data=wine, aes(x=citric.acid, y=total.sulfur.dioxide, color=quality)) + geom_point()
+```
+
 ### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
+
+Para comprobar la normalidad vamos a trabajar con el **test de Lilliefors** (una variante del test de **Kolmogorov-Smirnov** que asume que la media y la varianza son desconocidas, siendo especialmente desarrollado para testear la normalidad), en nuestro caso, del paquete **normtest**.
+
+Partimos de las hipótesis H0 y H1, donde:
+H0: La muestra proviene de una distribución normal.
+H1: La muestra no proviene de una distribución normal.
+
+El nivel de significancia con el que trabajaremos es de 0.05 (Alfa=0.05). Así, el criterio de decisión es el siguiente:
+Si P < Alfa Se rechaza H0
+Si p >= Alfa No se rechaza H0
+
+Analizamos la normalidad para todas las variables mediante un bucle con la función *lapply*:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Automatizamos el test de Lilliefors para todas las variables del dataset
+w_ntest <- lapply(wine, lillie.test)
+w_ntest
+```
+
+Para todas las variables, el valor de p se aproxima a cero (2.2e-16, que es uno de los resultados más comunes por ejemplo, sería la notación científica de 0.00000000000000022).
+
+Dado que el valor de p es menor que 0.05 en todos los casos, rechazamos pata todas las variables la hipótesis H0 ('La muestra proviene de una distribución normal'); y concluimos, por tanto, que las variables no siguen una distribución normal.
+
 ### 4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
 
 
