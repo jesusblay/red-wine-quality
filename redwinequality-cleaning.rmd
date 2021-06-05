@@ -264,7 +264,70 @@ vif(mlm)
 
 Como vemos, todos nuestros factores están entre 1 y 5, por lo que aceptaremos el supuesto de que no hay colinealidad.
 
-Ahora pasemos a mirar la normalidad. 
+Ahora pasemos a mirar la normalidad. Podemos observar la normalidad de los residuos de diferentes maneras.
+
+Una de las maneras es realizando un plot con los residuos de cada una de las variables:
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Análisis de la normalidad de los residuos:
+
+plot1 <- ggplot(data = wine, aes(alcohol, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+plot2 <- ggplot(data = wine, aes(sulphates, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot3 <- ggplot(data = wine, aes(volatile.acidity, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot4 <- ggplot(data = wine, aes(fixed.acidity, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot5 <- ggplot(data = wine, aes(total.sulfur.dioxide, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot6 <- ggplot(data = wine, aes(density, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot7 <- ggplot(data = wine, aes(chlorides, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot8 <- ggplot(data = wine, aes(residual.sugar, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6,plot7, plot8)
+
+qqnorm(mlm$residuals)
+qqline(mlm$residuals)
+
+shapiro.test(mlm$residuals)
+```
+
+Como podemos observar tanto por las gráficas, como por el test de Shapiro-Wilk de normalidad de los residuos, es que no siguen una distribución normal. El test de Shapiro-Wilk, nos da un p-valor de 2.043e-09, lo que nos hace rechazar la hopotesis nula de normalidad.
+
+Esto puede deberse a muchos factores, como por ejemplo, que las variables independientes que tenemos no son las únicas involucradas en la calidad del vino. Tampoco sabemos cómo se recogió la información de calidad, podría haber sido algo muy subjetivo y no relacionado a las variables que tenemos.
+
+Uno de los problemas del incumplimiento de la hipótesis de normalidad en los residuos, suele ser la existencia de heteroscedasticidad, que implica que la precisión del modelo no es constante. 
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Test de Breusch-Pagan para la heteroscedasticidad
+
+bptest(mlm)
+```
+
+Vemos que el test de Breusch-Pagan nos da un valor de 1.735e-13, volviendo a rechazar la hipótesis nula de homoscedasticidad, y confirmando que nuestras variables independientes, no son las adecuadas para nuestro modelo.
+
+
 
 
 

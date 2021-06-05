@@ -5,6 +5,7 @@ library(gridExtra)
 library(corrplot)
 library(relaimpo)
 library (effects)
+library(lmtest)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
@@ -93,4 +94,48 @@ calc.relimp(mlm, type = c("lmg"), rela = TRUE, rank = TRUE)
 require(car)
 vif(mlm)
 
+# Análisis de la normalidad de los residuos:
+
+plot1 <- ggplot(data = wine, aes(alcohol, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+plot2 <- ggplot(data = wine, aes(sulphates, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot3 <- ggplot(data = wine, aes(volatile.acidity, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot4 <- ggplot(data = wine, aes(fixed.acidity, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot5 <- ggplot(data = wine, aes(total.sulfur.dioxide, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot6 <- ggplot(data = wine, aes(density, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot7 <- ggplot(data = wine, aes(chlorides, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+plot8 <- ggplot(data = wine, aes(residual.sugar, mlm$residuals)) +
+  geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+  theme_bw()
+
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6,plot7, plot8)
+
+qqnorm(mlm$residuals)
+qqline(mlm$residuals)
+
+shapiro.test(mlm$residuals)
+
+# Test de Breusch-Pagan para la heteroscedasticidad
+
+bptest(mlm)
 
