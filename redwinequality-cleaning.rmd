@@ -25,6 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
+library(corrplot)
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
 ```
@@ -66,7 +67,12 @@ Tenemos 1599 observaciones. Vemos también que efectivamente todas las variables
 
 ## 2. Integración y selección de los datos de interés a analizar.
 
-De las 11 variables de entrada, a priori desconocemos como afecta cada una y su peso a la calidad final del vino, por lo que para empezar vamos a estudiar la distribución de cada una de estas variables en función de la calidad del vino (cuyos valores, en nuestra muestra, observamos que van del 3 al 8).
+De las 11 variables de entrada, a priori desconocemos como afecta cada una y su peso a la calidad final del vino, pero por la descripción de las variables, ya podemos identificar variables que estarán altamente correlacionadas.
+
+- ***ph*** - ***citric.acid*** - ***fixed.acidity*** - ya que son variables relacionas a la acidez.
+- ***free.sulfur.dioxide*** y ***total.sulfur.dioxide***, ya que la segunda contiene la primera.
+
+Para empezar vamos a estudiar la distribución de cada una de estas variables en función de la calidad del vino (cuyos valores, en nuestra muestra, observamos que van del 3 al 8).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución de fixed.acidity, volatile.acidity, citric.acid y residual.sugar en función de la calidad del vino      
@@ -95,13 +101,26 @@ v11 <- ggplot(data=wine, aes(x=factor(quality), y=alcohol, color=quality)) + geo
 grid.arrange(v9, v10, v11, ncol = 2, nrow = 2)
 ```
 
-A primera vista es difícil sacar conclusiones, pero estos datos ya nos ofrecen un primer punto de partida a partir del cuál comenzar nuestro análisis:
+A primera vista es difícil sacar conclusiones a través de los boxplot, pero estos datos ya nos ofrecen un primer punto de partida a partir del cuál comenzar nuestro análisis:
 
 Según muestran los *boxplots* anteriores, parece existir una correlación negativa entre la variable ***quality*** y las variables ***volatile.acidity***, ***chlorides *** y  ***pH***, que por otra parte sería completamente coherente con la descripción de estas variables, detallada en el punto 1 (descripción del dataset). También observamos una aparente relación inversa entre ***quality*** y ***density***, que a priori no parece tan obvia y que estudiaremos posteriormente.
 
 Igualmente, también parece existir una relación positiva entre la variable ***quality*** y las variables ***citric.acid ***,  ***sulphates *** y  ***alcohol***.
 
-Analizaremos estas posibles correlaciones más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino. 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Estudio de la correlción
+correlation <- cor(wine)
+corrplot(correlation, type ="upper", tl.col="black")
+```
+
+A pesar de que analizaremos la correlación más adelante, podemos apoyarnos en un gráfico de correlación para corroborar las observaciones hechas anteriormente con el boxplot. 
+Como podemos ver, comprobamos que nuestra variable ***quality*** se relaciona positivamente con ***alcohol***, ***sulphates***, y ***acid.citric*** y de forma negativa con ***volatile.acidity***, y ***chlorides***. Según este gráfico, no queda tan clara la correlación entre ***quality*** y **ph**.
+
+Además, parece claro que la variable ***residual.sugar*** no va a tener efecto en la variable ***quality***, pero no la descartaremos por ahora. 
+
+Por último, como ya preveíamos parece que hay una correlación alta entre las variables  ***ph*** y ***citric.acid***, y entre ***free.sulfur.dioxide*** y ***total.sulfur.dioxide***.
+
+Analizaremos estas posibles correlaciones en profundidad más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino.
 
 Sin embargo, nos interesaremos especialmente por analizar como afectan a la calidad del vino las variables ***density***, ***citric.acid ***,  ***sulphates *** y  ***alcohol***, así como también el ***pH*** (acidez total del vino) y el ***total sulfur dioxide*** (dióxido de azufre total).
 
@@ -128,13 +147,16 @@ Por otra parte, sí existen valores nulos, concretamente 132 en la variable *cit
 ### 3.2. Identificación y tratamiento de valores extremos.
 
 
-
+TBD
 
 
 
 
 ## 4. Análisis de los datos.
 ### 4.1. Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).
+### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
+### 4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
+
 
 Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, hemos visto que de nuestras 1.599 observaciones, la mejor nota obtenida es 8, situándose la gran mayoría entre 5 y 6 (rango intercuartílico). Observamos con más detalle la distribución de todas las puntuaciones.
 
@@ -143,8 +165,108 @@ Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, he
 ggplot(data=wine, aes(x=quality)) + geom_bar()
 ```
 
-### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
-### 4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
+Vamos a revisar la distribución de las variables mediante un histograma. Para ello vamos primero a escalar nuestros datos 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+wine_scaled <- data.frame(scale(wine))
+multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"), 
+           main = "")
+```
+
+Como lo que nos interesa saber es la contribución de las variables independientes en la explicación de la vairable dependiente (***Quality***), realizaremos un análisis de regresión lineal múltiple. Este análisis nos devolverá un coeficiente para cada variable que explica la variación de la variable dependiente como la suma de los efectos de las variables independients.
+
+Además, como lo que nos interesa es realizar un modelo inferencial, y no solo descriptivo, debemos realizar una serie de pruebas que verifiquen que nuestras variables son adecuadas para el modelo que queremos conseguir.
+
+1- La variable dependiente y los errores deben seguir una distribución normal
+2- Nos encontramos ante un supuesto de homoscedasticidad; es decir, las varianzas de la variable dependiente son iguales para los diferentes valores de la variable independiente (homogenieddad de varianza)
+3- No hay correlación entre las variables independientes
+4- No hay colinealidad, es decir, que no hay ninguna variables que sea combinación lineal de otras.
+
+Vamos a ir confirmando los puntaos anteriores a lo largo de nuestro análisis.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Vamos a analizar la correlación de nuestras variables
+corrplot(correlation, type ="upper", tl.col="black", method = 'number')
+```
+
+Si estudiamos la correlación entre las variables, podemos observar que:
+
+***Correlación positiva entre variable dependiente e independiente***
+Existe una correlación positiva y relativamente alta (de 0.48), entre la ***quality*** del vino y el ***alcohol***.
+La siguiente correlación más alta y positica, sería con ***Sulphates***, con una correlación de 0.25.
+Y la tercera con ***citric.acid*** con una correlación de 0.23
+
+***Correlación negativa entre variable dependiente e independiente***
+Si estudiamos la correlación negativa, podemos ver que hay una correlació negativa alta entre ***quality*** y ***volatile.acidity*** de -0.39.
+
+***Correlación entre vairables independientes***
+Como ya hemos comentado, es importante que nuestras variables independientes tengan una correlación baja entre ellas, porque una correlación alta, puede influir negativamente en nuestro modelo.
+
+Vemos que ***fixed.acidity*** y ***pH*** tienen una correlación negativa altísima, de hecho la más alta del moldeo con -0.68,***fixed.acidity*** y ***citric.acid*** en este caso positiva con un 0.67,  ***volatile.acidity*** y ***citric.acid*** de -0.55 y ***free.sulfur.dioxide*** con ***total.sulfur.dioxide*** de 0.67, cosa que ya habíamos previsto en puntos anteriores.
+
+Como ***ph*** tiene una correlación tan baja con nuestra variable dependiente,la excluiremos de nuestro modelo. Haremos lo mismo con ***free.sulfur.dioxide***, puesto que está incluida en ***total.sulfur.dioxide***, y con ***citric.acid***, puesto que está incluida en ***fixed.acidity*** y el hecho de incluirlas podría afectar negativamente al modelo.
+
+Vamos a realizar nuestro modelo:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Realizamos nuestro modelo excluyendo PH - FREE.SULFUR.DIOXIDE - CITRIC.ACID
+mlm <- lm(quality ~ alcohol + sulphates + volatile.acidity + citric.acid + fixed.acidity + total.sulfur.dioxide
+          + density + chlorides + residual.sugar,  data = wine )
+
+summary(mlm)
+```
+
+De este primer modelo podemos extraer las siguientes conclusiones:
+
+1) Dada la hipótesis nula de No relación entre las Variables Independientes y la Dependiente y viendo el p.valor de nuestro modelo, podemos ver que todas las variables que hemos incluido son relevantes para el modelo.
+2) El R-cuadrado (R-Squared) de nuestro modelo es de 0.3534, lo que significa que nuestro modelo sólo explica un 35% de la varianza.
+
+Utilizaremos el métdo ***Step Wise*** para que nos ayude a identificar si eliminando alguna variable, nuestro modelo mejora:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#Realizamos Step Wise para ver si vale la pena quitar alguna variable:
+
+Step_wise <- step(mlm, direction = "both", trace = 1)
+```
+
+como vemos, no se nos recomienda eliminar ninguna variable del modelo.
+
+Una vez hecho esto, nos interesa saber cuáles de nuestras variables son las que tienen más importancia en el modelo. Para ello, podemos hacer dos cosas:
+
+1) Realizar el análisis de regresión con los datos escalados, para comparar los coeficientes más altos en valor absoluto.
+2) Uitlizar la función calc.relimp para saber la importancia relativa de cada una de nuestras muestras.
+ 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Modelo de regresión lineal con datos escalados:
+
+mlm_scaled <- lm(quality ~ alcohol + sulphates + volatile.acidity + fixed.acidity + total.sulfur.dioxide
+          + density + chlorides + residual.sugar,  data = wine_scaled )
+summary(mlm_scaled)
+
+# Importancia de las variablas independientes
+
+calc.relimp(mlm, type = c("lmg"), rela = TRUE, rank = TRUE)
+```
+En ambos casos podemos comprobar que las variables que más influyen a nuestro modelo son ***alcohol***, ***sulphates*** y ***volatile.acidity***, mientras que la que menos aporta al modelo es ***residual.sugar*** como ya imaginabamos.
+
+Ahora que sabemos qué variables influyen mas en la calidad del vino tinto, vamos a intentar averiguar por qué nuestro modelo explica un porcentaje tan bajo de la varianza.
+
+Ya hemos analizado la correlación de las cariables independientes y hemos descartado variables que son combinación lineal de otras, pero aún nos queda revisar, la colinealidad, la distribución de las variables y los errores, y el supuesto de homoscedasticidad.
+
+Para la revisión de la colinealidad, podemos utilizar el factor de inflación de la varianza (VIF). Valores bajos (entre 1 y 5) nos indican que podría verse afectada por la colinealidad, pero que no es motivo de preocupación.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Colinealidad
+
+require(car)
+vif(mlm)
+```
+
+Como vemos, todos nuestros factores están entre 1 y 5, por lo que aceptaremos el supuesto de que no hay colinealidad.
+
+Ahora pasemos a mirar la normalidad. 
+
+
 
 ## 5. Representación de los resultados a partir de tablas y gráficas.
 
