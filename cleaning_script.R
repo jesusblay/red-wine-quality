@@ -2,6 +2,9 @@
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
+library(corrplot)
+library(relaimpo)
+library (effects)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
@@ -34,6 +37,13 @@ v11 <- ggplot(data=wine, aes(x=factor(quality), y=alcohol, color=quality)) + geo
 
 grid.arrange(v9, v10, v11, ncol = 2, nrow = 2)
 
+
+# Estudio de la correlción
+correlation <- cor(wine)
+corrplot(correlation, type ="upper", tl.col="black")
+
+
+
 # Estadísticas de valores vacíos
 colSums(is.na(wine))
 colSums(wine=='')
@@ -43,4 +53,44 @@ colSums(wine==0)
 
 # Verificamos la dimensión y la estructura del conjunto de datos 
 ggplot(data=wine, aes(x=quality)) + geom_bar()
+
+# Vamos a revisar la distribución de las variables mediante un histograma para ver si a priori detectamos outliers
+# Para ello vamos primero a escalar nuestros datos 
+
+wine_scaled <- data.frame(scale(wine))
+multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"), 
+           main = "")
+
+
+# Vamos a analizar la correlación de nuestras variables
+corrplot(correlation, type ="upper", tl.col="black", method = 'number')
+
+
+
+# Realizamos nuestro modelo excluyendo PH - FREE.SULFUR.DIOXIDE - CITRIC.ACID
+
+mlm <- lm(quality ~ alcohol + sulphates + volatile.acidity + fixed.acidity + total.sulfur.dioxide
+          + density + chlorides + residual.sugar,  data = wine )
+
+summary(mlm)
+
+#Realizamos Step Wise para ver si vale la pena quitar alguna variable:
+
+Step_wise <- step(mlm, direction = "both", trace = 1)
+
+# Modelo de regresión lineal con datos escalados:
+
+mlm_scaled <- lm(quality ~ alcohol + sulphates + volatile.acidity + fixed.acidity + total.sulfur.dioxide
+          + density + chlorides + residual.sugar,  data = wine_scaled )
+summary(mlm_scaled)
+
+# Importancia de las variablas independientes
+
+calc.relimp(mlm, type = c("lmg"), rela = TRUE, rank = TRUE)
+
+# Colinealidad
+
+require(car)
+vif(mlm)
+
 
