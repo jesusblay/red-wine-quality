@@ -29,7 +29,7 @@ library(corrplot)
 library(relaimpo)
 library(psych)
 library(lmtest)
-library(nortest)
+library(normtest)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
@@ -174,21 +174,25 @@ Vamos a explorar también como varían de manera conjunta algunas de las parejas
 # Distribución bivariante de las variables alcohol y citric.acid 
 ggplot(data=wine, aes(x=alcohol, y=citric.acid, color=quality)) + geom_point()
 ```
+Parece apreciarse que los vinos con mayor calidad presentan una gran cantidad relativa de alcohol y de acido cítrico de manera simultánea.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución bivariante de las variables volatile.acidity y sulphates
 ggplot(data=wine, aes(x=volatile.acidity, y=sulphates, color=quality)) + geom_point()
 ```
+En general este gráfico de dispersión no parece sugerir una clara relación entre las dos variables, si bien se aprecia claramente que los vinos de mayor calidad tienden a presentar una menor cantidad de ácido acético (medido por la ***volatile.acidity***).
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución bivariante de las variables alcohol y total.sulfur.dioxide
 ggplot(data=wine, aes(x=alcohol, y=total.sulfur.dioxide, color=quality)) + geom_point()
 ```
+El gráfico de dispersión muestra que los vinos de mayor calidad suelen presentar una mezcla de alcohol en cantidad relativa grande y una cantidad relativa pequeña de dioxido de azufre.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución bivariante de las variables citric.acid y total.sulfur.dioxide 
 ggplot(data=wine, aes(x=citric.acid, y=total.sulfur.dioxide, color=quality)) + geom_point()
 ```
+Observamos claramente como los vinos de calidad tienen una cantidad relativa pequeña de dioxido de azufre, independientemente de la cantidad de acido cítrico.
 
 ### 4.2. Comprobación de la normalidad y homogeneidad de la varianza.
 
