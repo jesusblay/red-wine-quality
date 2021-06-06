@@ -29,6 +29,7 @@ library(corrplot)
 library(relaimpo)
 library(psych)
 library(lmtest)
+library(nortest)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)

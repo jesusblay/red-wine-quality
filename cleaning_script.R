@@ -4,8 +4,10 @@ library(dplyr)
 library(gridExtra)
 library(corrplot)
 library(relaimpo)
-library (effects)
+library(psych)
 library(lmtest)
+library(nortest)
+
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
@@ -52,8 +54,24 @@ colSums(wine=='')
 # Estadísticas de valores cero
 colSums(wine==0)
 
+
 # Verificamos la dimensión y la estructura del conjunto de datos 
-ggplot(data=wine, aes(x=quality)) + geom_bar()
+ggplot(data=wine, aes(x=quality)) + geom_bar(fill='blue', alpha=0.75) + scale_x_discrete(limits=c(0:10))
+
+# Distribución bivariante de las variables alcohol y citric.acid 
+ggplot(data=wine, aes(x=alcohol, y=citric.acid, color=quality)) + geom_point()
+
+# Distribución bivariante de las variables volatile.acidity y sulphates
+ggplot(data=wine, aes(x=volatile.acidity, y=sulphates, color=quality)) + geom_point()
+
+# Distribución bivariante de las variables alcohol y total.sulfur.dioxide
+ggplot(data=wine, aes(x=alcohol, y=total.sulfur.dioxide, color=quality)) + geom_point()
+
+# Distribución bivariante de las variables citric.acid y total.sulfur.dioxide 
+ggplot(data=wine, aes(x=citric.acid, y=total.sulfur.dioxide, color=quality)) + geom_point()
+
+w_ntest <- lapply(wine, lillie.test)
+w_ntest
 
 # Vamos a revisar la distribución de las variables mediante un histograma para ver si a priori detectamos outliers
 # Para ello vamos primero a escalar nuestros datos 
