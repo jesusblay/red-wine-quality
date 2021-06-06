@@ -77,13 +77,12 @@ w_ntest
 # Para ello vamos primero a escalar nuestros datos 
 
 wine_scaled <- data.frame(scale(wine))
-multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"), 
-           main = "")
+multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"))
 
 
 # Vamos a analizar la correlación de nuestras variables
-corrplot(correlation, type ="upper", tl.col="black", method = 'number')
-
+# matrix of the p-value of the correlation
+corrplot(correlation, type ="upper", tl.srt=45, number.cex=0.5, tl.col="black", method = 'number')
 
 
 # Realizamos nuestro modelo excluyendo PH - FREE.SULFUR.DIOXIDE - CITRIC.ACID

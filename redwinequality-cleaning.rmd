@@ -3,15 +3,15 @@ title: 'Práctica 2: Limpieza y análisis de datos'
 author: 'Elisabeth Anna López Simpson y Jesús Antonio Blay Tamarit'
 date: '`r format(Sys.Date(),"%e de %B %Y")`'
 output:
+  pdf_document:
+    highlight: zenburn
+    toc: yes
   html_document:
     highlight: default
     number_sections: yes
     theme: cosmo
     toc: yes
     toc_depth: 2
-  pdf_document:
-    highlight: zenburn
-    toc: yes
   word_document: default
 ---
 
@@ -221,8 +221,7 @@ Vamos a revisar la distribución de las variables mediante un histograma. Para e
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 wine_scaled <- data.frame(scale(wine))
-multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"), 
-           main = "")
+multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid"))
 ```
 
 Como lo que nos interesa saber es la contribución de las variables independientes en la explicación de la vairable dependiente (***quality***), realizaremos un análisis de regresión lineal múltiple. Este análisis nos devolverá un coeficiente para cada variable que explica la variación de la variable dependiente como la suma de los efectos de las variables independients.
@@ -238,7 +237,7 @@ Vamos a ir confirmando los puntaos anteriores a lo largo de nuestro análisis.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Vamos a analizar la correlación de nuestras variables
-corrplot(correlation, type ="upper", tl.col="black", method = 'number')
+corrplot(correlation, type ="upper", tl.srt=45, number.cex=0.5, tl.col="black", method = 'number')
 ```
 
 Si estudiamos la correlación entre las variables, podemos observar que:
@@ -378,9 +377,6 @@ bptest(mlm)
 ```
 
 Vemos que el test de Breusch-Pagan nos da un valor de 1.735e-13, volviendo a rechazar la hipótesis nula de homoscedasticidad, y confirmando que nuestras variables independientes, no son las adecuadas para nuestro modelo.
-
-
-
 
 
 ## 5. Representación de los resultados a partir de tablas y gráficas.
