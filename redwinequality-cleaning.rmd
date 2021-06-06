@@ -381,7 +381,24 @@ Vemos que el test de Breusch-Pagan nos da un valor de 1.735e-13, volviendo a rec
 
 ## 5. Representación de los resultados a partir de tablas y gráficas.
 
+Podemos ver todas las tablas y las gráficas introducidas a medida que explicamos el análisis.
+
 ## 6. Resolución del problema. A partir de los resultados obtenidos, ¿cuáles son las conclusiones? ¿Los resultados permiten responder al problema?
+
+Para el análisis de nuestro dataset, hemos optado por realizar una regresión lineal multiple, para ver si nuestras variables independientes tienen influencia en la explicación de nuestra variable dependiente (***quality***).
+
+Tras el análisis inicial de nuestras variables independientes, ya podíamos ver que varias de nuestras variables eran combinación lineal de otras, y por tanto las hemos excluido del análisis.
+
+Estas son, el PH, por ser un medido de acidez y tener otras variables específicas de acidez; el ácido cítrico, por ser un acidificante, y ya teníamos otras variables como fixed.acidity que contemplaba el acído cítrico, y el free sulfur dioxide, porque ya teníamos el total.sulfur.dioxide que tiene una correlación mayor con la variable dependiente e incluye la primera.
+
+Una vez sabemos qué variantes queremos introducir en nuestro modelo, generamos nuestro modelo de regresión lineal, y vemos que todas las variables introducidas son significativas. Las variables que más influyen a nuestro modelo son ***alcohol***, ***sulphates*** y ***volatile.acidity***, mientras que la que menos aporta al modelo es ***residual.sugar*** .A pesar de ello nuestro modelo sólo se explica un 35% de la varianza, que no es demasiado alta.
+
+Podemos comprobar que nuestras variables independientes no son adecuadas, mediante los tests que hemos realizado.
+Hemos descartado un posible porblema de colinealidad, pero hemos identificado que los residuos no siguen una distribución normal y que nos encontramos ante un supuesto de heteroscedasticidad, es decir que no hay homogeneidad en la varianza.
+
+Como conclusión, podemos decir que las variables independientes escogidas no determinan con claridadla calidad del vino, y esto puede deberse a que las variables escogidas, o no son las adecuadas, o son insuficientes. Además, como no sabemos cómo se ha obtenido el índice de calidad, podría deberse a que se han tenido otros factores en cuenta que no estamos analizando.
+
+Por tanto, aunque nuestros resultados no son óptimos para indicar qué factores son los que determinan la calidad del vino, sí que podemos decir que de las variables que tenemos, el alcohol, los sulfatos y la acidez volátil, son los que más inflyen.
 
 ## 7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.
 
