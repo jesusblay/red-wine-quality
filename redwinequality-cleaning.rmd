@@ -28,6 +28,7 @@ library(gridExtra)
 library(corrplot)
 library(relaimpo)
 library(psych)
+library(lmtest)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
