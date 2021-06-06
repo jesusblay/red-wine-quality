@@ -29,7 +29,7 @@ library(corrplot)
 library(relaimpo)
 library(psych)
 library(lmtest)
-library(normtest)
+library(nortest)
 
 # Cargamos el fichero de datos
 wine <- read.csv('winequality-red.csv', header=TRUE)
@@ -148,9 +148,31 @@ colSums(wine=='')
 colSums(wine==0)
 ```
 
-No existen valores vacíos (en caso de que los hubiera, no deberíamos prescindir de la observación, pero hubiese sido recomendable saberlo en su caso, para ignorar estos valores en las distintas funciones que usaremos en nuestro análisis).
+No existen valores vacíos (en caso de que los hubiera, no deberíamos prescindir de la observación, pero hubiese sido recomendable saberlo en su caso, para ignorar estos valores en las distintas funciones que usaremos en nuestro análisis, o para imputar un valor medio, si no queremos perder los registros.).
 
-Por otra parte, sí existen valores nulos, concretamente 132 en la variable *citric.acid*, pero entendemos que son valores legítimos y correctos, ya que sus valores posibles, como hemos visto con la función ***summary***, oscilan entre 0 y 1. Por tanto, vamos a dar por buenos estos valores nulos.
+Por otra parte, sí existen valores nulos, concretamente 132 en la variable *citric.acid*. El ácido cítrico es un ácido que está presente de forma natural en la uva, con lo que probablemente todos estos valores "0", son valores que realmente deberían ser nulos.
+
+En este caso tendríamos dos opciones. 
+La primera, eliminar los registros de nuestra muestra, pero no es demasiado conveniente, porque corresponden a un 8% del total de los datos.
+La segunda opción es imputar su valor medio.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+# Identificar valores 0
+row_sub <- apply(wine, 1, function(row) all(row !=0 ))
+
+# Sustituir por NA
+
+wine[wine == 0] <- NA
+
+# Sustituir por valor medio
+wine$citric.acid[is.na(wine$citric.acid)] <- mean(wine$citric.acid, na.rm = TRUE)
+```
+
+Lo primero que hemos hecho es cambiar los ceros por valores nulos, y luego los cambiaremos por la media de la variable.
+
+De esta manera ya contamos con un dataset que tiene valores validos.
+
 
 ### 3.2. Identificación y tratamiento de valores extremos.
 
@@ -391,7 +413,7 @@ Podemos ver todas las tablas y las gráficas introducidas a medida que explicamo
 
 Para el análisis de nuestro dataset, hemos optado por realizar una regresión lineal multiple, para ver si nuestras variables independientes tienen influencia en la explicación de nuestra variable dependiente (***quality***).
 
-Tras el análisis inicial de nuestras variables independientes, ya podíamos ver que varias de nuestras variables eran combinación lineal de otras, y por tanto las hemos excluido del análisis.
+Tras el análisis inicial de nuestras variables independientes, y tras cambiar los valores 0 de ***citric.acid*** a la media de la variable, ya podíamos ver que varias de nuestras variables eran combinación lineal de otras, y por tanto las hemos excluido del análisis.
 
 Estas son, el PH, por ser un medido de acidez y tener otras variables específicas de acidez; el ácido cítrico, por ser un acidificante, y ya teníamos otras variables como fixed.acidity que contemplaba el acído cítrico, y el free sulfur dioxide, porque ya teníamos el total.sulfur.dioxide que tiene una correlación mayor con la variable dependiente e incluye la primera.
 

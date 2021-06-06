@@ -54,6 +54,15 @@ colSums(wine=='')
 # Estadísticas de valores cero
 colSums(wine==0)
 
+# Identificar valores 0
+row_sub <- apply(wine, 1, function(row) all(row !=0 ))
+
+# Sustituir por NA
+
+wine[wine == 0] <- NA
+
+# Sustituir por valor medio
+wine$citric.acid[is.na(wine$citric.acid)] <- mean(wine$citric.acid, na.rm = TRUE)
 
 # Verificamos la dimensión y la estructura del conjunto de datos 
 ggplot(data=wine, aes(x=quality)) + geom_bar(fill='blue', alpha=0.75) + scale_x_discrete(limits=c(0:10))
