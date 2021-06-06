@@ -112,17 +112,19 @@ Según muestran los *boxplots* anteriores, parece existir una correlación negat
 
 Igualmente, también parece existir una relación positiva entre la variable ***quality*** y las variables ***citric.acid ***,  ***sulphates *** y  ***alcohol***.
 
+Si bien analizaremos la correlación más adelante, podemos apoyarnos en un gráfico de correlación para corroborar las observaciones hechas anteriormente con los boxplots.
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Estudio de la correlción
 correlation <- cor(wine)
 corrplot(correlation, type ="upper", tl.col="black")
 ```
-A pesar de que analizaremos la correlación más adelante, podemos apoyarnos en un gráfico de correlación para corroborar las observaciones hechas anteriormente con los boxplots. 
+
 Como podemos ver, comprobamos que nuestra variable ***quality*** se relaciona positivamente con ***alcohol***, ***sulphates***, y ***acid.citric*** y de forma negativa con ***volatile.acidity***, y ***chlorides***. Según este gráfico, no queda tan clara la correlación entre ***quality*** y **pH**.
 
 Además, parece claro que la variable ***residual.sugar*** no va a tener efecto en la variable ***quality***, pero no la descartaremos por ahora. 
 
-Por último, como ya preveíamos parece que hay una correlación alta entre las variables  ***ph*** y ***citric.acid***, y entre ***free.sulfur.dioxide*** y ***total.sulfur.dioxide***.
+Por último, como ya preveíamos parece que hay una correlación alta entre las variables  ***pH*** y ***citric.acid***, y entre ***free.sulfur.dioxide*** y ***total.sulfur.dioxide***.
 
 Analizaremos estas posibles correlaciones en profundidad más adelante. En todo caso, por ahora no podemos descartar ninguna de las variables ya que todas ellas corresponden a distintas mediciones de factores que podrían ser determinantes en la calidad del vino.
 
@@ -164,7 +166,7 @@ Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, he
 ggplot(data=wine, aes(x=quality)) + geom_bar(fill='blue', alpha=0.75) + scale_x_discrete(limits=c(0:10))
 ```
 
-Vamos a explorar como varían de manera conjunta algunas de las parejas de variables en las que ya hemos inferido una probable relación, distinguiendo la calidad del vino.
+Vamos a explorar también como varían de manera conjunta algunas de las parejas de variables en las que ya hemos visto que parecen estar relacionadas con la variable ***quality***, distinguiendo la calidad del vino para cada uno de los puntos en el diagrama de dispersión.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Distribución bivariante de las variables alcohol y citric.acid 
@@ -213,13 +215,6 @@ Dado que el valor de p es menor que 0.05 en todos los casos, rechazamos pata tod
 ### 4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
 
 
-Sabemos que la calidad del vino se mide en una escala de 0 a 10. Sin embargo, hemos visto que de nuestras 1.599 observaciones, la mejor nota obtenida es 8, situándose la gran mayoría entre 5 y 6 (rango intercuartílico). Observamos con más detalle la distribución de todas las puntuaciones.
-
-```{r echo=TRUE, message=FALSE, warning=FALSE}
-# Verificamos la dimensión y la estructura del conjunto de datos 
-ggplot(data=wine, aes(x=quality)) + geom_bar()
-```
-
 Vamos a revisar la distribución de las variables mediante un histograma. Para ello vamos primero a escalar nuestros datos 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -228,7 +223,7 @@ multi.hist(x = wine_scaled, dcol = c("blue", "red"), dlty = c("dotted", "solid")
            main = "")
 ```
 
-Como lo que nos interesa saber es la contribución de las variables independientes en la explicación de la vairable dependiente (***Quality***), realizaremos un análisis de regresión lineal múltiple. Este análisis nos devolverá un coeficiente para cada variable que explica la variación de la variable dependiente como la suma de los efectos de las variables independients.
+Como lo que nos interesa saber es la contribución de las variables independientes en la explicación de la vairable dependiente (***quality***), realizaremos un análisis de regresión lineal múltiple. Este análisis nos devolverá un coeficiente para cada variable que explica la variación de la variable dependiente como la suma de los efectos de las variables independients.
 
 Además, como lo que nos interesa es realizar un modelo inferencial, y no solo descriptivo, debemos realizar una serie de pruebas que verifiquen que nuestras variables son adecuadas para el modelo que queremos conseguir.
 
