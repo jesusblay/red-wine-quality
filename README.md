@@ -7,3 +7,4 @@ El citado dataset puede encontrarse dentro de la siguiente URL de **Kaggle**:
 https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009
 
 
+Antes de revisar el análisis y su contenido, recomendamos comenzar por la *Wiki* de este mismo repositorio.
