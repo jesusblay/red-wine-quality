@@ -165,3 +165,8 @@ shapiro.test(mlm$residuals)
 
 bptest(mlm)
 
+# Generate CSV
+wine_final <- wine[ ,c("alcohol","sulphates","volatile.acidity","fixed.acidity","total.sulfur.dioxide","density",
+                      "chlorides","residual.sugar")]
+write.csv(wine_final, "wine_final.csv")
+

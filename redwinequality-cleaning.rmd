@@ -448,5 +448,12 @@ Por tanto, aunque nuestros resultados no son óptimos para indicar qué factores
 
 ## 7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.
 
-Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R
+Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R en el fichero https://github.com/jesusblay/red-wine-quality
 
+Además exportamos el fichero con los datos finales que hemos usado:
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+wine_final <- wine[ ,c("alcohol","sulphates","volatile.acidity","fixed.acidity",
+                       "total.sulfur.dioxide","density",
+                      "chlorides","residual.sugar")]
+write.csv(wine_final, "wine_final.csv")
+```
