@@ -382,7 +382,7 @@ summary {
 
 <h1 class="title toc-ignore">Práctica 2: Limpieza y análisis de datos</h1>
 <h4 class="author">Elisabeth Anna López Simpson y Jesús Antonio Blay Tamarit</h4>
-<h4 class="date">6 de junio 2021</h4>
+<h4 class="date">7 de junio 2021</h4>
 
 </div>
 
@@ -396,6 +396,7 @@ summary {
 <li><a href="#representación-de-los-resultados-a-partir-de-tablas-y-gráficas."><span class="toc-section-number">0.6</span> 5. Representación de los resultados a partir de tablas y gráficas.</a></li>
 <li><a href="#resolución-del-problema.-a-partir-de-los-resultados-obtenidos-cuáles-son-las-conclusiones-los-resultados-permiten-responder-al-problema"><span class="toc-section-number">0.7</span> 6. Resolución del problema. A partir de los resultados obtenidos, ¿cuáles son las conclusiones? ¿Los resultados permiten responder al problema?</a></li>
 <li><a href="#código-hay-que-adjuntar-el-código-preferiblemente-en-r-con-el-que-se-ha-realizado-la-limpieza-análisis-y-representación-de-los-datos.-si-lo-preferís-también-podéis-trabajar-en-python."><span class="toc-section-number">0.8</span> 7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.</a></li>
+<li><a href="#contribuciones"><span class="toc-section-number">0.9</span> Contribuciones</a></li>
 </ul>
 </div>
 
@@ -966,7 +967,20 @@ bptest(mlm)</code></pre>
 </div>
 <div id="código-hay-que-adjuntar-el-código-preferiblemente-en-r-con-el-que-se-ha-realizado-la-limpieza-análisis-y-representación-de-los-datos.-si-lo-preferís-también-podéis-trabajar-en-python." class="section level2">
 <h2><span class="header-section-number">0.8</span> 7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.</h2>
-<p>Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R</p>
+<p>Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R, que junto con el resto de ficheros que componen este análisis puede encontrarse en el siguiente repositorio:</p>
+<p><a href="https://github.com/jesusblay/red-wine-quality" class="uri">https://github.com/jesusblay/red-wine-quality</a></p>
+<p>Además exportamos el fichero con los datos finales que hemos usado:</p>
+<pre class="r"><code>wine_final &lt;- wine[ ,c(&quot;alcohol&quot;,&quot;sulphates&quot;,&quot;volatile.acidity&quot;,&quot;fixed.acidity&quot;,
+                       &quot;total.sulfur.dioxide&quot;,&quot;density&quot;,
+                      &quot;chlorides&quot;,&quot;residual.sugar&quot;)]
+write.csv(wine_final, &quot;wine_final.csv&quot;)</code></pre>
+</div>
+<div id="contribuciones" class="section level2">
+<h2><span class="header-section-number">0.9</span> Contribuciones</h2>
+<p>Hemos estado en contacto contínuo para cada una de las preguntas.</p>
+<p><strong><em>Investigación previa</em></strong>: EALS &amp; JABT</p>
+<p><strong><em>Redacción de las respuestas</em></strong>: EALS &amp; JABT</p>
+<p><strong><em>Desarrollo código</em></strong>: EALS &amp; JABT</p>
 </div>
 
 

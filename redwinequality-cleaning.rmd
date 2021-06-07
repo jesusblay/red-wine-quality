@@ -3,15 +3,15 @@ title: 'Práctica 2: Limpieza y análisis de datos'
 author: 'Elisabeth Anna López Simpson y Jesús Antonio Blay Tamarit'
 date: '`r format(Sys.Date(),"%e de %B %Y")`'
 output:
-  pdf_document:
-    highlight: zenburn
-    toc: yes
   html_document:
     highlight: default
     number_sections: yes
     theme: cosmo
     toc: yes
     toc_depth: 2
+  pdf_document:
+    highlight: zenburn
+    toc: yes
   word_document: default
 ---
 
@@ -448,7 +448,10 @@ Por tanto, aunque nuestros resultados no son óptimos para indicar qué factores
 
 ## 7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.
 
-Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R en el fichero https://github.com/jesusblay/red-wine-quality
+Todo el código de R empleado en este análisis se encuentra resumido en el archivo cleaning_script.R, que junto con el resto de ficheros que componen este análisis puede encontrarse en el siguiente repositorio:
+
+https://github.com/jesusblay/red-wine-quality
+
 
 Además exportamos el fichero con los datos finales que hemos usado:
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
