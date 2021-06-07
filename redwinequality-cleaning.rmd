@@ -457,3 +457,15 @@ wine_final <- wine[ ,c("alcohol","sulphates","volatile.acidity","fixed.acidity",
                       "chlorides","residual.sugar")]
 write.csv(wine_final, "wine_final.csv")
 ```
+
+## Contribuciones
+
+Hemos estado en contacto contínuo para cada una de las preguntas.
+
+***Investigación previa***: EALS & JABT
+
+***Redacción de las respuestas***: EALS & JABT
+
+***Desarrollo código***: EALS & JABT
+
+
